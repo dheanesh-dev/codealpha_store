@@ -1,0 +1,51 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Dashboard{% endblock %} · Lumio Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body class="dash">
+{% with name=request.resolver_match.url_name %}
+<div class="dash-shell">
+  <aside class="dash-side">
+    <a class="brand" href="{% url 'dashboard:overview' %}"><span class="brand-mark"><i class="fa-solid fa-bag-shopping"></i></span>Lumio Admin</a>
+    <nav class="dash-nav">
+      <a href="{% url 'dashboard:overview' %}" class="{% if name == 'overview' %}active{% endif %}"><i class="fa-solid fa-gauge"></i> Overview</a>
+      <a href="{% url 'dashboard:product_list' %}" class="{% if 'product' in name %}active{% endif %}"><i class="fa-solid fa-box"></i> Products</a>
+      <a href="{% url 'dashboard:category_list' %}" class="{% if 'category' in name %}active{% endif %}"><i class="fa-solid fa-tags"></i> Categories</a>
+      <a href="{% url 'dashboard:order_list' %}" class="{% if 'order' in name %}active{% endif %}"><i class="fa-solid fa-receipt"></i> Orders</a>
+      <a href="{% url 'dashboard:customer_list' %}" class="{% if 'customer' in name %}active{% endif %}"><i class="fa-solid fa-users"></i> Customers</a>
+      <a href="{% url 'dashboard:inventory' %}" class="{% if 'inventory' in name %}active{% endif %}"><i class="fa-solid fa-warehouse"></i> Inventory</a>
+      <hr>
+      <a href="{% url 'store:home' %}"><i class="fa-solid fa-store"></i> View store</a>
+      <a href="{% url 'admin:index' %}"><i class="fa-solid fa-database"></i> Django admin</a>
+      <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}
+        <button type="submit"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</button>
+      </form>
+    </nav>
+  </aside>
+
+  <div class="dash-main">
+    {% include 'partials/messages.html' %}
+    <div class="dash-top">
+      <div style="display:flex;gap:12px;align-items:center">
+        <button class="dash-menu-btn" type="button" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+        <div>
+          <h1>{% block heading %}{% endblock %}</h1>
+          {% block subheading %}{% endblock %}
+        </div>
+      </div>
+      <div>{% block top_actions %}{% endblock %}</div>
+    </div>
+    {% block content %}{% endblock %}
+  </div>
+</div>
+{% endwith %}
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

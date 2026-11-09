@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Page not found · Lumio{% endblock %}
+{% block content %}
+<section class="container empty-state">
+  <i class="fa-regular fa-face-frown"></i><h1>404 · Page not found</h1>
+  <p>The page you are looking for does not exist or has moved.</p>
+  <a class="btn btn-primary" href="{% url 'store:home' %}">Back to home</a>
+</section>
+{% endblock %}

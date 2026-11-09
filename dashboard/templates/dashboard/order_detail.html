@@ -1,0 +1,51 @@
+{% extends 'dashboard/base.html' %}
+{% load shop_extras %}
+{% block title %}Order {{ order.order_id }}{% endblock %}
+{% block heading %}Order {{ order.order_id }}{% endblock %}
+{% block top_actions %}<a class="btn btn-ghost" href="{% url 'dashboard:order_list' %}"><i class="fa-solid fa-arrow-left"></i> Back to orders</a>{% endblock %}
+{% block content %}
+<div class="panel">
+  <div class="meta-grid">
+    <div><span>Status</span><span class="badge badge-{{ order.badge }}">{{ order.get_status_display }}</span></div>
+    <div><span>Placed on</span><strong>{{ order.created_at|date:"d M Y, H:i" }}</strong></div>
+    <div><span>Customer</span><strong>{{ order.user.get_full_name|default:order.user.username }}</strong> <small class="muted">({{ order.user.username }})</small></div>
+    <div><span>Email</span><strong>{{ order.user.email|default:"-" }}</strong></div>
+    <div><span>Total</span><strong>{{ order.total|money }}</strong></div>
+  </div>
+</div>
+
+<div class="dash-cols">
+  <div class="panel">
+    <h3>Items</h3>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>Product</th><th class="num">Price</th><th class="num">Qty</th><th class="num">Subtotal</th></tr></thead>
+      <tbody>{% for item in order.items.all %}
+        <tr><td>{{ item.product_name }}</td><td class="num">{{ item.unit_price|money }}</td><td class="num">{{ item.quantity }}</td><td class="num">{{ item.line_total|money }}</td></tr>
+      {% endfor %}
+        <tr><td colspan="3" class="num"><strong>Total</strong></td><td class="num"><strong>{{ order.total|money }}</strong></td></tr>
+      </tbody></table></div>
+  </div>
+  <div>
+    <div class="panel">
+      <h3>Update status</h3>
+      {% if form %}
+        <form method="post" novalidate>{% csrf_token %}
+          {% for field in form %}{% include 'partials/form_field.html' %}{% endfor %}
+          <button class="btn btn-primary btn-block" type="submit">Update status</button>
+        </form>
+        <p class="help">Cancelling an order returns its items to stock.</p>
+      {% else %}
+        <p class="muted">This order is {{ order.get_status_display|lower }}, so its status can no longer be changed.</p>
+      {% endif %}
+    </div>
+    <div class="panel">
+      <h3>Delivery address</h3>
+      <address class="address" style="font-style:normal;line-height:1.8">
+        <strong>{{ order.shipping_address.full_name }}</strong><br>
+        {% for line in order.shipping_address.as_lines %}{{ line }}<br>{% endfor %}
+        <i class="fa-solid fa-phone"></i> {{ order.shipping_address.phone }}
+      </address>
+    </div>
+  </div>
+</div>
+{% endblock %}

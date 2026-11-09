@@ -1,0 +1,50 @@
+<header class="navbar">
+  <div class="container nav-inner">
+    <a class="brand" href="{% url 'store:home' %}"><span class="brand-mark"><i class="fa-solid fa-bag-shopping"></i></span>Lumio</a>
+
+    <form class="nav-search" action="{% url 'store:product_list' %}" method="get" role="search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Search products..." aria-label="Search products" maxlength="100">
+    </form>
+
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+
+    <nav class="nav-links" id="nav-links">
+      <a href="{% url 'store:home' %}">Home</a>
+      <a href="{% url 'store:product_list' %}">Shop</a>
+      <div class="dropdown">
+        <button type="button" class="dropdown-toggle" aria-haspopup="true">Categories <i class="fa-solid fa-chevron-down"></i></button>
+        <div class="dropdown-menu">
+          {% for c in nav_categories %}
+            <a href="{{ c.get_absolute_url }}"><i class="fa-solid {{ c.icon }}"></i> {{ c.name }}</a>
+          {% empty %}
+            <span class="dropdown-empty">No categories yet</span>
+          {% endfor %}
+        </div>
+      </div>
+      <a class="cart-link" href="{% url 'cart:detail' %}" aria-label="Shopping cart">
+        <i class="fa-solid fa-cart-shopping"></i> Cart
+        <span class="cart-badge" id="cart-count" {% if not cart_count %}hidden{% endif %}>{{ cart_count }}</span>
+      </a>
+      {% if user.is_authenticated %}
+        <div class="dropdown dropdown-right">
+          <button type="button" class="dropdown-toggle user-toggle" aria-haspopup="true">
+            <span class="avatar avatar-sm">{{ user.username|slice:":1"|upper }}</span> {{ user.first_name|default:user.username }}
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="dropdown-menu">
+            <a href="{% url 'accounts:profile' %}"><i class="fa-regular fa-user"></i> My account</a>
+            <a href="{% url 'orders:history' %}"><i class="fa-solid fa-box"></i> My orders</a>
+            {% if user.is_staff %}<a href="{% url 'dashboard:overview' %}"><i class="fa-solid fa-gauge"></i> Admin dashboard</a>{% endif %}
+            <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}
+              <button type="submit"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</button>
+            </form>
+          </div>
+        </div>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Log in</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'accounts:register' %}">Sign up</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>

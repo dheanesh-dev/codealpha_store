@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load shop_extras %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow"><i class="fa-solid fa-truck-fast"></i> Free delivery on every order</span>
+      <h1>Discover products you'll <span class="grad-text">love to own</span></h1>
+      <p>Electronics, fashion, home essentials and fitness gear, handpicked for quality and delivered straight to your door.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="{% url 'store:product_list' %}">Shop now <i class="fa-solid fa-arrow-right"></i></a>
+        {% if not user.is_authenticated %}<a class="btn btn-outline-light btn-lg" href="{% url 'accounts:register' %}">Create account</a>{% endif %}
+      </div>
+      <div class="hero-stats">
+        <div><strong>{{ categories|length }}</strong><span>Categories</span></div>
+        <div><strong>24/7</strong><span>Online store</span></div>
+        <div><strong>COD</strong><span>Pay on delivery</span></div>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-card c1"><i class="fa-solid fa-headphones"></i><span>Audio</span></div>
+      <div class="hero-card c2"><i class="fa-solid fa-shirt"></i><span>Fashion</span></div>
+      <div class="hero-card c3"><i class="fa-solid fa-mug-hot"></i><span>Home</span></div>
+      <div class="hero-card c4"><i class="fa-solid fa-dumbbell"></i><span>Fitness</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="container perks">
+  <div class="perk"><i class="fa-solid fa-truck-fast"></i><div><strong>Free delivery</strong><span>On all orders</span></div></div>
+  <div class="perk"><i class="fa-solid fa-shield-halved"></i><div><strong>Secure checkout</strong><span>Your data stays protected</span></div></div>
+  <div class="perk"><i class="fa-solid fa-location-dot"></i><div><strong>Order tracking</strong><span>Follow every status</span></div></div>
+  <div class="perk"><i class="fa-solid fa-rotate-left"></i><div><strong>Easy cancellation</strong><span>Before it ships</span></div></div>
+</section>
+
+<section class="section container">
+  <div class="section-head"><h2>Shop by category</h2><a class="link-more" href="{% url 'store:product_list' %}">View all <i class="fa-solid fa-arrow-right"></i></a></div>
+  <div class="category-grid">
+    {% for c in categories %}
+      <a class="category-card reveal" href="{{ c.get_absolute_url }}">
+        <span class="cat-icon"><i class="fa-solid {{ c.icon }}"></i></span>
+        <strong>{{ c.name }}</strong>
+        <span>{{ c.product_count }} product{{ c.product_count|pluralize }}</span>
+      </a>
+    {% empty %}
+      <p class="muted">No categories yet. Run <code>python manage.py seed_data</code> to load sample data.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section container">
+  <div class="section-head"><h2>Featured products</h2><a class="link-more" href="{% url 'store:product_list' %}">Browse all <i class="fa-solid fa-arrow-right"></i></a></div>
+  <div class="product-grid">
+    {% for product in featured %}{% include 'partials/product_card.html' %}
+    {% empty %}<p class="muted">No featured products yet.</p>{% endfor %}
+  </div>
+</section>
+
+<section class="container">
+  <div class="promo">
+    <div>
+      <h2>Fresh arrivals, every week</h2>
+      <p>Be the first to get new products. Create a free account to save your cart and track every order.</p>
+    </div>
+    {% if user.is_authenticated %}
+      <a class="btn btn-light btn-lg" href="{% url 'orders:history' %}">My orders</a>
+    {% else %}
+      <a class="btn btn-light btn-lg" href="{% url 'accounts:register' %}">Join Lumio</a>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section container">
+  <div class="section-head"><h2>New arrivals</h2></div>
+  <div class="product-grid">
+    {% for product in new_arrivals %}{% include 'partials/product_card.html' %}
+    {% empty %}<p class="muted">No products yet.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

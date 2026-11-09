@@ -1,0 +1,45 @@
+{% extends 'dashboard/base.html' %}
+{% load shop_extras %}
+{% block title %}Overview{% endblock %}
+{% block heading %}Overview{% endblock %}
+{% block subheading %}<p class="muted">Welcome back, {{ user.first_name|default:user.username }}. Here's how the store is doing.</p>{% endblock %}
+{% block top_actions %}<a class="btn btn-primary" href="{% url 'dashboard:product_create' %}"><i class="fa-solid fa-plus"></i> Add product</a>{% endblock %}
+{% block content %}
+<div class="kpi-grid">
+  <div class="kpi"><span class="kpi-icon c2"><i class="fa-solid fa-indian-rupee-sign"></i></span><div><strong>{{ revenue|money }}</strong><span>Revenue (excl. cancelled)</span></div></div>
+  <div class="kpi"><span class="kpi-icon c1"><i class="fa-solid fa-receipt"></i></span><div><strong>{{ order_count }}</strong><span>Orders</span></div></div>
+  <div class="kpi"><span class="kpi-icon c4"><i class="fa-solid fa-users"></i></span><div><strong>{{ customer_count }}</strong><span>Customers</span></div></div>
+  <div class="kpi"><span class="kpi-icon c1"><i class="fa-solid fa-box"></i></span><div><strong>{{ product_count }}</strong><span>Products in {{ category_count }} categories</span></div></div>
+  <div class="kpi"><span class="kpi-icon c5"><i class="fa-solid fa-triangle-exclamation"></i></span><div><strong>{{ low_stock_count }}</strong><span>Low / out of stock</span></div></div>
+</div>
+
+<div class="dash-cols">
+  <div class="panel">
+    <h3>Recent orders <a class="link-more" href="{% url 'dashboard:order_list' %}">View all</a></h3>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>Order</th><th>Customer</th><th>Status</th><th class="num">Total</th></tr></thead>
+      <tbody>
+      {% for order in recent_orders %}
+        <tr><td><a href="{% url 'dashboard:order_detail' order.order_id %}"><strong>{{ order.order_id }}</strong></a></td>
+          <td>{{ order.user.username }}</td><td><span class="badge badge-{{ order.badge }}">{{ order.get_status_display }}</span></td>
+          <td class="num">{{ order.total|money }}</td></tr>
+      {% empty %}<tr><td colspan="4" class="muted">No orders yet.</td></tr>{% endfor %}
+      </tbody></table></div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <h3>Orders by status</h3>
+      <div class="status-list">{% for label, count, badge in status_counts %}
+        <div><span class="badge badge-{{ badge }}">{{ label }}</span><strong>{{ count }}</strong></div>{% endfor %}</div>
+    </div>
+    <div class="panel">
+      <h3>Stock alerts <a class="link-more" href="{% url 'dashboard:inventory' %}">Inventory</a></h3>
+      {% for p in low_stock %}
+        <div class="status-list" style="margin-bottom:8px"><div><a href="{% url 'dashboard:product_edit' p.pk %}">{{ p.name }}</a>
+          {% if p.stock == 0 %}<span class="badge badge-danger">Out of stock</span>{% else %}<span class="badge badge-warning">{{ p.stock }} left</span>{% endif %}</div></div>
+      {% empty %}<p class="muted">All products are well stocked.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Log in · Lumio{% endblock %}
+{% block content %}
+<section class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-head"><span class="brand-mark big"><i class="fa-solid fa-bag-shopping"></i></span>
+      <h1>Welcome back</h1><p class="muted">Log in to view your cart and orders.</p></div>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include 'partials/form_errors.html' %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% for field in form %}{% include 'partials/form_field.html' %}{% endfor %}
+      <button class="btn btn-primary btn-block btn-lg" type="submit">Log in</button>
+    </form>
+    <p class="auth-foot">New to Lumio? <a href="{% url 'accounts:register' %}">Create an account</a></p>
+  </div>
+</section>
+{% endblock %}

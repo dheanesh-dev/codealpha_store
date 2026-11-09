@@ -1,0 +1,19 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}Categories{% endblock %}
+{% block heading %}Categories{% endblock %}
+{% block top_actions %}<a class="btn btn-primary" href="{% url 'dashboard:category_create' %}"><i class="fa-solid fa-plus"></i> Add category</a>{% endblock %}
+{% block content %}
+<div class="panel"><div class="table-wrap"><table class="table">
+  <thead><tr><th>Category</th><th>Description</th><th class="num">Products</th><th></th></tr></thead>
+  <tbody>
+  {% for c in categories %}
+    <tr><td><strong><i class="fa-solid {{ c.icon }}" style="color:var(--primary);width:22px"></i> {{ c.name }}</strong></td>
+      <td class="muted">{{ c.description|default:"-" }}</td><td class="num">{{ c.product_count }}</td>
+      <td><div class="actions">
+        <a class="icon-btn" href="{% url 'dashboard:category_edit' c.pk %}" title="Edit" aria-label="Edit {{ c.name }}"><i class="fa-solid fa-pen"></i></a>
+        <form method="post" action="{% url 'dashboard:category_delete' c.pk %}" data-confirm="Delete category &quot;{{ c.name }}&quot;?">{% csrf_token %}
+          <button class="icon-btn danger" type="submit" title="Delete" aria-label="Delete {{ c.name }}"><i class="fa-regular fa-trash-can"></i></button></form>
+      </div></td></tr>
+  {% empty %}<tr><td colspan="4" class="muted">No categories yet.</td></tr>{% endfor %}
+  </tbody></table></div></div>
+{% endblock %}

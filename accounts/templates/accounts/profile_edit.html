@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Edit profile · Lumio{% endblock %}
+{% block content %}
+<section class="page-header"><div class="container"><h1>Edit profile</h1></div></section>
+<section class="container narrow">
+  <form method="post" class="card form-card" novalidate>
+    {% csrf_token %}
+    {% include 'partials/form_errors.html' %}
+    <div class="form-grid">{% for field in form %}{% include 'partials/form_field.html' %}{% endfor %}</div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Save changes</button>
+      <a class="btn btn-ghost" href="{% url 'accounts:profile' %}">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

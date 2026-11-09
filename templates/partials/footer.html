@@ -1,0 +1,25 @@
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <a class="brand brand-light" href="{% url 'store:home' %}"><span class="brand-mark"><i class="fa-solid fa-bag-shopping"></i></span>Lumio</a>
+      <p class="footer-text">Thoughtfully chosen products for everyday life, delivered to your door.</p>
+    </div>
+    <div>
+      <h4>Shop</h4>
+      <a href="{% url 'store:product_list' %}">All products</a>
+      {% for c in nav_categories|slice:":4" %}<a href="{{ c.get_absolute_url }}">{{ c.name }}</a>{% endfor %}
+    </div>
+    <div>
+      <h4>Account</h4>
+      {% if user.is_authenticated %}
+        <a href="{% url 'accounts:profile' %}">My account</a>
+        <a href="{% url 'orders:history' %}">My orders</a>
+        <a href="{% url 'cart:detail' %}">Cart</a>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Log in</a>
+        <a href="{% url 'accounts:register' %}">Create account</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="container footer-bottom">© {% now "Y" %} Lumio · Built with Django for the CodeAlpha Full Stack Internship</div>
+</footer>

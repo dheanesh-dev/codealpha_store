@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load shop_extras %}
+{% block title %}{% if current_category %}{{ current_category.name }}{% else %}Shop{% endif %} · Lumio{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <nav class="breadcrumbs"><a href="{% url 'store:home' %}">Home</a> <i class="fa-solid fa-chevron-right"></i> <span>Shop</span>{% if current_category %} <i class="fa-solid fa-chevron-right"></i> <span>{{ current_category.name }}</span>{% endif %}</nav>
+    <h1>{% if query %}Results for "{{ query }}"{% elif current_category %}{{ current_category.name }}{% else %}All products{% endif %}</h1>
+    <p class="muted">{{ page.paginator.count }} product{{ page.paginator.count|pluralize }} found</p>
+  </div>
+</section>
+
+<section class="container listing">
+  <aside class="filters">
+    <form method="get" id="filter-form">
+      <div class="filter-group">
+        <label class="label" for="q">Search</label>
+        <input class="input" type="search" id="q" name="q" value="{{ query }}" placeholder="Product name..." maxlength="100">
+      </div>
+      <div class="filter-group">
+        <label class="label" for="category">Category</label>
+        <select class="input" id="category" name="category">
+          <option value="">All categories</option>
+          {% for c in categories %}<option value="{{ c.slug }}" {% if c.slug == selected_category %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="label">Price range (₹)</span>
+        <div class="price-inputs">
+          <input class="input" type="number" name="min_price" value="{{ min_price }}" min="0" step="1" placeholder="Min" aria-label="Minimum price">
+          <span>–</span>
+          <input class="input" type="number" name="max_price" value="{{ max_price }}" min="0" step="1" placeholder="Max" aria-label="Maximum price">
+        </div>
+      </div>
+      <div class="filter-group">
+        <label class="check-label"><input class="check" type="checkbox" name="in_stock" value="1" {% if only_in_stock %}checked{% endif %}> <span>In stock only</span></label>
+      </div>
+      <div class="filter-group">
+        <label class="label" for="sort">Sort by</label>
+        <select class="input" id="sort" name="sort">
+          {% for key, label in sorts %}<option value="{{ key }}" {% if key == sort %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit"><i class="fa-solid fa-filter"></i> Apply filters</button>
+      <a class="btn btn-ghost btn-block" href="{% url 'store:product_list' %}">Clear all</a>
+    </form>
+  </aside>
+
+  <div class="listing-main">
+    <div class="product-grid grid-3">
+      {% for product in page %}{% include 'partials/product_card.html' %}
+      {% empty %}
+        <div class="empty-state wide">
+          <i class="fa-regular fa-face-meh"></i><h3>No products match your search</h3>
+          <p>Try different keywords or clear the filters.</p>
+          <a class="btn btn-primary" href="{% url 'store:product_list' %}">Clear filters</a>
+        </div>
+      {% endfor %}
+    </div>
+    {% include 'partials/pagination.html' with querystring=querystring %}
+  </div>
+</section>
+{% endblock %}

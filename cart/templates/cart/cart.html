@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load shop_extras %}
+{% block title %}Your cart · Lumio{% endblock %}
+{% block content %}
+<section class="page-header"><div class="container"><h1>Shopping cart</h1></div></section>
+<section class="container">
+{% if items %}
+  <div class="cart-layout">
+    <div class="cart-list">
+      {% for item in items %}
+      <div class="cart-item card">
+        <a class="cart-thumb" href="{{ item.product.get_absolute_url }}">{% with product=item.product %}{% include 'partials/product_image.html' %}{% endwith %}</a>
+        <div class="cart-info">
+          <a class="product-cat" href="{{ item.product.category.get_absolute_url }}">{{ item.product.category.name }}</a>
+          <h3><a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a></h3>
+          <div class="muted">{{ item.product.price|money }} each</div>
+          {% if not item.product.is_active or item.product.stock == 0 %}
+            <div class="error-text"><i class="fa-solid fa-circle-exclamation"></i> This item is no longer available. Please remove it.</div>
+          {% elif item.quantity > item.product.stock %}
+            <div class="error-text"><i class="fa-solid fa-circle-exclamation"></i> Only {{ item.product.stock }} in stock. Please reduce the quantity.</div>
+          {% endif %}
+        </div>
+        <form method="post" action="{% url 'cart:update' item.id %}" class="qty-form">
+          {% csrf_token %}
+          <button type="submit" name="action" value="set" class="visually-hidden" tabindex="-1" aria-hidden="true">Update</button>
+          <div class="qty-stepper">
+            <button type="submit" name="action" value="dec" class="qty-btn" aria-label="Decrease quantity">−</button>
+            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" aria-label="Quantity">
+            <button type="submit" name="action" value="inc" class="qty-btn" aria-label="Increase quantity">+</button>
+          </div>
+        </form>
+        <div class="cart-line-total">{{ item.line_total|money }}</div>
+        <form method="post" action="{% url 'cart:remove' item.id %}">
+          {% csrf_token %}
+          <button type="submit" class="icon-remove" aria-label="Remove {{ item.product.name }}" title="Remove"><i class="fa-regular fa-trash-can"></i></button>
+        </form>
+      </div>
+      {% endfor %}
+      <a class="link-more" href="{% url 'store:product_list' %}"><i class="fa-solid fa-arrow-left"></i> Continue shopping</a>
+    </div>
+
+    <aside class="summary-card card">
+      <h3>Order summary</h3>
+      <div class="summary-row"><span>Subtotal</span><span>{{ subtotal|money }}</span></div>
+      <div class="summary-row"><span>Delivery</span><span class="text-success">Free</span></div>
+      <div class="summary-row total"><span>Total</span><span>{{ subtotal|money }}</span></div>
+      {% if has_problem %}
+        <button class="btn btn-primary btn-block btn-lg" disabled>Fix cart issues to continue</button>
+      {% else %}
+        <a class="btn btn-primary btn-block btn-lg" href="{% url 'orders:checkout' %}">Proceed to checkout <i class="fa-solid fa-arrow-right"></i></a>
+      {% endif %}
+      <p class="help"><i class="fa-solid fa-lock"></i> Cash on delivery. Pay when your order arrives.</p>
+    </aside>
+  </div>
+{% else %}
+  <div class="empty-state">
+    <i class="fa-solid fa-cart-shopping"></i><h2>Your cart is empty</h2>
+    <p>Looks like you haven't added anything yet.</p>
+    <a class="btn btn-primary btn-lg" href="{% url 'store:product_list' %}">Start shopping</a>
+  </div>
+{% endif %}
+</section>
+{% endblock %}

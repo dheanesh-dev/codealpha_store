@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Access denied · Lumio{% endblock %}
+{% block content %}
+<section class="container empty-state">
+  <i class="fa-solid fa-lock"></i><h1>403 · Access denied</h1>
+  <p>You do not have permission to open this page.</p>
+  <a class="btn btn-primary" href="{% url 'store:home' %}">Back to home</a>
+</section>
+{% endblock %}

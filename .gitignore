@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+env/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Secrets and local config (never commit these)
+.env
+.secret_key
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

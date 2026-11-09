@@ -1,0 +1,20 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block heading %}{{ title }}{% endblock %}
+{% block top_actions %}<a class="btn btn-ghost" href="{% url 'dashboard:product_list' %}"><i class="fa-solid fa-arrow-left"></i> Back to products</a>{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="panel form-panel" novalidate>
+  {% csrf_token %}
+  {% include 'partials/form_errors.html' %}
+  {% if product and product.image %}<div class="thumb-preview"><img src="{{ product.image.url }}" alt="{{ product.name }}"></div>{% endif %}
+  <div class="form-grid">
+    {% for field in form %}
+      <div class="{% if field.name == 'name' or field.name == 'description' or field.name == 'image' %}span-2{% endif %}">{% include 'partials/form_field.html' %}</div>
+    {% endfor %}
+  </div>
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save product</button>
+    <a class="btn btn-ghost" href="{% url 'dashboard:product_list' %}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

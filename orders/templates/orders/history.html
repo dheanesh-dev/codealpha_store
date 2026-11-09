@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load shop_extras %}
+{% block title %}My orders · Lumio{% endblock %}
+{% block content %}
+<section class="page-header"><div class="container"><h1>My orders</h1><p class="muted">{{ page.paginator.count }} order{{ page.paginator.count|pluralize }}</p></div></section>
+<section class="container narrow-lg">
+  {% for order in page %}
+    <a class="card order-card" href="{% url 'orders:detail' order.order_id %}">
+      <div class="order-card-top">
+        <div><strong>{{ order.order_id }}</strong><span class="muted">{{ order.created_at|date:"d M Y, H:i" }}</span></div>
+        <span class="badge badge-{{ order.badge }}">{{ order.get_status_display }}</span>
+      </div>
+      <div class="order-card-items">
+        {% for item in order.items.all|slice:":3" %}<span>{{ item.quantity }} × {{ item.product_name }}</span>{% endfor %}
+        {% if order.items.all|length > 3 %}<span class="muted">+ {{ order.items.all|length|add:"-3" }} more</span>{% endif %}
+      </div>
+      <div class="order-card-bottom"><span class="muted">Total</span><strong>{{ order.total|money }}</strong><span class="link-more">View details <i class="fa-solid fa-arrow-right"></i></span></div>
+    </a>
+  {% empty %}
+    <div class="empty-state"><i class="fa-solid fa-box-open"></i><h2>No orders yet</h2><p>When you place an order it will show up here.</p>
+      <a class="btn btn-primary btn-lg" href="{% url 'store:product_list' %}">Start shopping</a></div>
+  {% endfor %}
+  {% include 'partials/pagination.html' with querystring='' %}
+</section>
+{% endblock %}

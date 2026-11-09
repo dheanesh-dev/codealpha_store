@@ -1,0 +1,15 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block heading %}{{ title }}{% endblock %}
+{% block top_actions %}<a class="btn btn-ghost" href="{% url 'dashboard:category_list' %}"><i class="fa-solid fa-arrow-left"></i> Back to categories</a>{% endblock %}
+{% block content %}
+<form method="post" class="panel form-panel" novalidate>
+  {% csrf_token %}
+  {% include 'partials/form_errors.html' %}
+  {% for field in form %}{% include 'partials/form_field.html' %}{% endfor %}
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save category</button>
+    <a class="btn btn-ghost" href="{% url 'dashboard:category_list' %}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

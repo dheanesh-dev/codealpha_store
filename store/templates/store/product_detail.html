@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load shop_extras %}
+{% block title %}{{ product.name }} · Lumio{% endblock %}
+{% block content %}
+<section class="page-header slim">
+  <div class="container">
+    <nav class="breadcrumbs"><a href="{% url 'store:home' %}">Home</a> <i class="fa-solid fa-chevron-right"></i> <a href="{% url 'store:product_list' %}">Shop</a> <i class="fa-solid fa-chevron-right"></i> <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a> <i class="fa-solid fa-chevron-right"></i> <span>{{ product.name }}</span></nav>
+  </div>
+</section>
+
+<section class="container detail-grid">
+  <div class="gallery">{% include 'partials/product_image.html' %}</div>
+
+  <div class="detail-info">
+    <a class="product-cat" href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a>
+    <h1>{{ product.name }}</h1>
+    <div class="price-lg">{{ product.price|money }}</div>
+
+    <div class="stock-line">
+      {% if not product.in_stock %}<span class="badge badge-danger"><i class="fa-solid fa-circle-xmark"></i> Out of stock</span>
+      {% elif product.is_low_stock %}<span class="badge badge-warning"><i class="fa-solid fa-triangle-exclamation"></i> Only {{ product.stock }} left, order soon</span>
+      {% else %}<span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> In stock ({{ product.stock }} available)</span>{% endif %}
+    </div>
+
+    <p class="detail-desc">{{ product.description|linebreaksbr }}</p>
+
+    <form method="post" action="{% url 'cart:add' product.id %}" class="add-to-cart-form detail-actions">
+      {% csrf_token %}
+      <div class="qty-stepper" data-max="{{ max_quantity }}">
+        <button type="button" class="qty-btn" data-step="-1" aria-label="Decrease quantity" {% if not product.in_stock %}disabled{% endif %}>−</button>
+        <input type="number" name="quantity" value="1" min="1" max="{{ max_quantity }}" aria-label="Quantity" {% if not product.in_stock %}disabled{% endif %}>
+        <button type="button" class="qty-btn" data-step="1" aria-label="Increase quantity" {% if not product.in_stock %}disabled{% endif %}>+</button>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg" {% if not product.in_stock %}disabled{% endif %}>
+        <i class="fa-solid fa-cart-plus"></i> {% if product.in_stock %}Add to cart{% else %}Sold out{% endif %}
+      </button>
+    </form>
+    {% if not user.is_authenticated %}<p class="help"><i class="fa-solid fa-circle-info"></i> You'll be asked to <a href="{% url 'accounts:login' %}?next={{ request.path }}">log in</a> before adding items.</p>{% endif %}
+
+    <ul class="detail-perks">
+      <li><i class="fa-solid fa-truck-fast"></i> Free delivery</li>
+      <li><i class="fa-solid fa-money-bill-wave"></i> Cash on delivery</li>
+      <li><i class="fa-solid fa-rotate-left"></i> Cancel before it ships</li>
+    </ul>
+  </div>
+</section>
+
+{% if related %}
+<section class="section container">
+  <div class="section-head"><h2>You may also like</h2></div>
+  <div class="product-grid">{% for product in related %}{% include 'partials/product_card.html' %}{% endfor %}</div>
+</section>
+{% endif %}
+{% endblock %}

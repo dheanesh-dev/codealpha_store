@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Create account · Lumio{% endblock %}
+{% block content %}
+<section class="auth-wrap">
+  <div class="auth-card wide">
+    <div class="auth-head"><span class="brand-mark big"><i class="fa-solid fa-user-plus"></i></span>
+      <h1>Create your account</h1><p class="muted">It only takes a minute.</p></div>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include 'partials/form_errors.html' %}
+      {% for field in form %}{% include 'partials/form_field.html' %}{% endfor %}
+      <button class="btn btn-primary btn-block btn-lg" type="submit">Create account</button>
+    </form>
+    <p class="auth-foot">Already have an account? <a href="{% url 'accounts:login' %}">Log in</a></p>
+  </div>
+</section>
+{% endblock %}

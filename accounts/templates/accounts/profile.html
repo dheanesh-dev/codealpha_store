@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load shop_extras %}
+{% block title %}My account · Lumio{% endblock %}
+{% block content %}
+<section class="page-header"><div class="container"><h1>My account</h1><p class="muted">Manage your details and follow your orders.</p></div></section>
+<section class="container profile-grid">
+  <aside class="card profile-card">
+    <span class="avatar avatar-lg">{{ user.username|slice:":1"|upper }}</span>
+    <h2>{{ user.get_full_name|default:user.username }}</h2>
+    <p class="muted">@{{ user.username }}</p>
+    <dl class="info-list">
+      <div><dt><i class="fa-regular fa-envelope"></i> Email</dt><dd>{{ user.email|default:"Not set" }}</dd></div>
+      <div><dt><i class="fa-solid fa-phone"></i> Phone</dt><dd>{{ profile.phone|default:"Not set" }}</dd></div>
+      <div><dt><i class="fa-solid fa-location-dot"></i> City</dt><dd>{{ profile.city|default:"Not set" }}</dd></div>
+      <div><dt><i class="fa-regular fa-calendar"></i> Member since</dt><dd>{{ user.date_joined|date:"d M Y" }}</dd></div>
+    </dl>
+    <a class="btn btn-outline btn-block" href="{% url 'accounts:profile_edit' %}"><i class="fa-solid fa-pen"></i> Edit profile</a>
+    {% if user.is_staff %}<a class="btn btn-primary btn-block" href="{% url 'dashboard:overview' %}"><i class="fa-solid fa-gauge"></i> Admin dashboard</a>{% endif %}
+  </aside>
+
+  <div>
+    <div class="stat-cards">
+      <div class="stat-card"><i class="fa-solid fa-box"></i><strong>{{ stats.orders }}</strong><span>Total orders</span></div>
+      <div class="stat-card"><i class="fa-solid fa-hourglass-half"></i><strong>{{ stats.pending }}</strong><span>Pending</span></div>
+      <div class="stat-card"><i class="fa-solid fa-indian-rupee-sign"></i><strong>{{ stats.spent|money }}</strong><span>Total spent</span></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Recent orders</h3><a class="link-more" href="{% url 'orders:history' %}">View all</a></div>
+      {% for order in recent_orders %}
+        <a class="order-row" href="{% url 'orders:detail' order.order_id %}">
+          <div><strong>{{ order.order_id }}</strong><span class="muted">{{ order.created_at|date:"d M Y" }} · {{ order.items.all|length }} item{{ order.items.all|length|pluralize }}</span></div>
+          <div class="order-row-right"><span class="badge badge-{{ order.badge }}">{{ order.get_status_display }}</span><strong>{{ order.total|money }}</strong></div>
+        </a>
+      {% empty %}
+        <div class="empty-state small"><i class="fa-solid fa-box-open"></i><p>You haven't placed any orders yet.</p><a class="btn btn-primary" href="{% url 'store:product_list' %}">Start shopping</a></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

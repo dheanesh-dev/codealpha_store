@@ -1,0 +1,9 @@
+<div class="toast-stack" id="toast-stack" aria-live="polite">
+  {% for message in messages %}
+    <div class="toast toast-{{ message.level_tag }}" role="status">
+      <i class="fa-solid {% if message.level_tag == 'success' %}fa-circle-check{% elif message.level_tag == 'error' %}fa-circle-exclamation{% elif message.level_tag == 'warning' %}fa-triangle-exclamation{% else %}fa-circle-info{% endif %}"></i>
+      <span>{{ message }}</span>
+      <button type="button" class="toast-close" aria-label="Dismiss">&times;</button>
+    </div>
+  {% endfor %}
+</div>
